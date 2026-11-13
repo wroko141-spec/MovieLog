@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Новый пароль{% endblock %}
+{% block content %}
+<section class="auth card">
+  <h1>Новый пароль</h1>
+  <form method="post" novalidate>{% csrf_token %}
+    {% include 'accounts/_form.html' %}
+    <button class="btn btn--wide" type="submit">Сохранить пароль</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Ссылка недействительна{% endblock %}
+{% block content %}
+<section class="auth card">
+  <h1>Ссылка недействительна</h1>
+  <p>Ссылка устарела или уже была использована. Запросите новую.</p>
+  <a class="btn btn--wide" href="{% url 'forgot_password' %}">Получить новую ссылку</a>
+</section>
+{% endblock %}

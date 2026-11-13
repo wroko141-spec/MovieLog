@@ -36,6 +36,16 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    @property
+    def is_admin(self):
+        return self.role == self.ROLE_ADMIN or self.is_superuser
+
+    def save(self, *args, **kwargs):
+        # администратор получает доступ к панели управления Django
+        if self.role == self.ROLE_ADMIN:
+            self.is_staff = True
+        super().save(*args, **kwargs)
+
 
 TOKEN_TTL_MINUTES = 30
 
@@ -61,6 +71,10 @@ class PasswordResetToken(models.Model):
     def is_valid(self):
         return self.used_at is None and self.expires_at > timezone.now()
 
+    def mark_used(self):
+        self.used_at = timezone.now()
+        self.save(update_fields=['used_at'])
+
     @staticmethod
     def make_hash(raw_token):
         return hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
@@ -69,6 +83,8 @@ class PasswordResetToken(models.Model):
     def create_for(cls, user):
         """Создаёт токен и возвращает его в открытом виде (уходит в письмо, в базе не хранится)."""
         raw_token = secrets.token_urlsafe(32)
+        # старые неиспользованные ссылки этого пользователя перестают работать
+        cls.objects.filter(user=user, used_at__isnull=True).update(used_at=timezone.now())
         cls.objects.create(
             user=user,
             token_hash=cls.make_hash(raw_token),

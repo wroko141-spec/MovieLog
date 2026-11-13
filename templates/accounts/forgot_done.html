@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Проверьте почту{% endblock %}
+{% block content %}
+<section class="auth card">
+  <h1>Проверьте почту</h1>
+  <p>Если этот email зарегистрирован, мы отправили на него ссылку для смены пароля. Ссылка действует {{ minutes }} минут.</p>
+  <a class="btn btn--wide" href="{% url 'login' %}">Ко входу</a>
+</section>
+{% endblock %}

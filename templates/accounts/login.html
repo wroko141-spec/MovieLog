@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<section class="auth card">
+  <h1>Вход</h1>
+  <form method="post" novalidate>{% csrf_token %}
+    {% include 'accounts/_form.html' %}
+    <button class="btn btn--wide" type="submit">Войти</button>
+  </form>
+  <p class="auth__links"><a href="{% url 'forgot_password' %}">Забыли пароль?</a> · <a href="{% url 'register' %}">Регистрация</a></p>
+</section>
+{% endblock %}
