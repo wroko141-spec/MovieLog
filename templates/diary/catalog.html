@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load diary_extras %}
+{% block title %}Каталог{% endblock %}
+{% block content %}
+<h1>Каталог фильмов</h1>
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Название фильма" maxlength="100">
+  <select name="genre">
+    <option value="">Все жанры</option>
+    {% for g in genres %}<option value="{{ g.id }}" {% if g.id == genre_id %}selected{% endif %}>{{ g.name }}</option>{% endfor %}
+  </select>
+  <button class="btn" type="submit">Найти</button>
+</form>
+{% if page.object_list %}
+  <div class="grid">
+    {% for movie in page.object_list %}{% with status=in_diary|get_item:movie.id %}{% include 'diary/_movie_card.html' %}{% endwith %}{% endfor %}
+  </div>
+  {% if page.has_other_pages %}
+  <nav class="pager">
+    {% if page.has_previous %}<a href="?q={{ q|urlencode }}&genre={{ genre_id|default_if_none:'' }}&page={{ page.previous_page_number }}">← Назад</a>{% endif %}
+    <span>Страница {{ page.number }} из {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a href="?q={{ q|urlencode }}&genre={{ genre_id|default_if_none:'' }}&page={{ page.next_page_number }}">Вперёд →</a>{% endif %}
+  </nav>
+  {% endif %}
+{% else %}
+  <div class="empty card">Ничего не нашлось. Попробуйте другое название или жанр.</div>
+{% endif %}
+{% endblock %}

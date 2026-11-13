@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero__text">
+    <h1>Твой личный <span class="accent">дневник фильмов</span></h1>
+    <p>Отмечай, что посмотрел, ставь оценки, пиши отзывы и получай подборку фильмов под настроение с помощью ИИ.</p>
+    {% if user.is_authenticated %}
+      <a class="btn" href="{% url 'diary' %}">Открыть дневник</a>
+      <a class="btn btn--ghost" href="{% url 'ai' %}">Подобрать фильм</a>
+    {% else %}
+      <a class="btn" href="{% url 'register' %}">Начать бесплатно</a>
+      <a class="btn btn--ghost" href="{% url 'catalog' %}">Смотреть каталог</a>
+    {% endif %}
+  </div>
+  <div class="hero__art" aria-hidden="true">
+    <div class="ticket">🎬<b>{{ movies_count }}</b><span>фильмов в каталоге</span></div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature card"><div class="feature__icon">📒</div><h3>Дневник</h3><p>Списки «Хочу посмотреть» и «Посмотрел» всегда под рукой.</p></div>
+  <div class="feature card"><div class="feature__icon">⭐</div><h3>Оценки и отзывы</h3><p>Ставь оценку от 1 до 10 и записывай впечатления.</p></div>
+  <div class="feature card"><div class="feature__icon">✨</div><h3>Подбор ИИ</h3><p>Опиши настроение, и ИИ посоветует фильм с учётом твоих оценок.</p></div>
+</section>
+
+{% if latest %}
+<section>
+  <div class="section-head"><h2>Новое в каталоге</h2><a href="{% url 'catalog' %}">Весь каталог →</a></div>
+  <div class="grid">{% for movie in latest %}{% include 'diary/_movie_card.html' %}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

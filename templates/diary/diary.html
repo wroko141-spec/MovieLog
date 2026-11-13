@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Мой дневник{% endblock %}
+{% block content %}
+<h1>Мой дневник</h1>
+<section class="stats">
+  <div class="stat card"><b>{{ stats.watched }}</b><span>посмотрено</span></div>
+  <div class="stat card"><b>{{ stats.want }}</b><span>хочу посмотреть</span></div>
+  <div class="stat card"><b>{{ stats.avg_rating|default:"-" }}</b><span>средняя оценка</span></div>
+  <div class="stat card"><b>{% for g in stats.top_genres %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% empty %}-{% endfor %}</b><span>любимые жанры</span></div>
+</section>
+<nav class="tabs">
+  <a href="?" class="{% if not status %}active{% endif %}">Все</a>
+  <a href="?status=want" class="{% if status == 'want' %}active{% endif %}">Хочу посмотреть</a>
+  <a href="?status=watched" class="{% if status == 'watched' %}active{% endif %}">Посмотрел</a>
+</nav>
+{% if entries %}
+<div class="entries">
+  {% for e in entries %}
+  <div class="entry card" data-entry-row="{{ e.id }}">
+    <a href="{% url 'movie' e.movie.id %}" class="entry__poster">{% with movie=e.movie %}{% include '_poster.html' %}{% endwith %}</a>
+    <div class="entry__body">
+      <a class="entry__title" href="{% url 'movie' e.movie.id %}">{{ e.movie.title }} <span class="muted">({{ e.movie.year }})</span></a>
+      {% if e.status == 'watched' %}
+        <span class="badge badge--ok">Посмотрел{% if e.watched_at %} {{ e.watched_at|date:"d.m.Y" }}{% endif %}</span>
+        {% if e.rating %}<span class="stars">{{ e.rating }}/10</span>{% endif %}
+      {% else %}<span class="badge">Хочу посмотреть</span>{% endif %}
+      {% if e.review %}<p class="entry__review">{{ e.review }}</p>{% endif %}
+    </div>
+    <div class="entry__actions">
+      {% if e.status == 'want' %}<button class="btn btn--sm" data-mark-watched="{{ e.id }}">Посмотрел</button>{% endif %}
+      <a class="btn btn--ghost btn--sm" href="{% url 'movie' e.movie.id %}">Изменить</a>
+      <button class="btn btn--danger btn--sm" data-remove="{{ e.id }}">Удалить</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+  <div class="empty card">Здесь пока пусто. <a href="{% url 'catalog' %}">Найдите фильм в каталоге</a> и добавьте его в дневник.</div>
+{% endif %}
+{% endblock %}

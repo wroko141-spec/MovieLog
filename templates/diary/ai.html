@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Подбор фильма{% endblock %}
+{% block content %}
+<section class="ai card">
+  <h1>✨ Подбор фильма с помощью ИИ</h1>
+  <p class="muted">Опишите настроение своими словами. ИИ учтёт ваши оценки и посоветует фильмы из каталога, которых ещё нет в дневнике.</p>
+  <form data-ai-form>
+    <input type="text" name="mood" maxlength="100" required placeholder="Например: хочу что-то доброе и смешное">
+    <button class="btn" type="submit">Подобрать</button>
+  </form>
+  <div class="chips">
+    <button type="button" data-mood="хочу посмеяться">😂 посмеяться</button>
+    <button type="button" data-mood="грустное настроение, хочу задуматься">🌧 задуматься</button>
+    <button type="button" data-mood="хочу напряжённый фильм с адреналином">⚡ адреналин</button>
+    <button type="button" data-mood="уютный вечер с семьёй">🏠 семейный вечер</button>
+    <button type="button" data-mood="что-то про космос и будущее">🚀 космос</button>
+  </div>
+  <div class="ai__result" data-ai-result hidden></div>
+</section>
+
+<section>
+  <h2>Прошлые подборки</h2>
+  <div data-ai-history>
+  {% for h in history %}
+    <div class="card history"><div class="muted">{{ h.created_at|date:"d.m.Y H:i" }} · «{{ h.mood }}»</div><pre>{{ h.response_text }}</pre></div>
+  {% empty %}
+    <p class="muted" data-ai-empty>Подборок пока не было.</p>
+  {% endfor %}
+  </div>
+</section>
+{% endblock %}

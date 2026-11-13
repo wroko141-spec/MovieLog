@@ -1,0 +1,8 @@
+<a class="mcard" href="{% url 'movie' movie.id %}">
+  {% include '_poster.html' %}
+  <div class="mcard__body">
+    <div class="mcard__title">{{ movie.title }}</div>
+    <div class="mcard__meta">{{ movie.year }} · {% for g in movie.genres.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+    {% if status == 'watched' %}<span class="badge badge--ok">Посмотрел</span>{% elif status == 'want' %}<span class="badge">Хочу посмотреть</span>{% endif %}
+  </div>
+</a>

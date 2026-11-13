@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ movie.title }}{% endblock %}
+{% block content %}
+<article class="movie">
+  <div class="movie__poster">{% include '_poster.html' %}</div>
+  <div class="movie__info">
+    <h1>{{ movie.title }} <span class="muted">({{ movie.year }})</span></h1>
+    <div class="tags">{% for g in movie.genres.all %}<a class="tag" href="{% url 'catalog' %}?genre={{ g.id }}">{{ g.name }}</a>{% endfor %}</div>
+    <p>{{ movie.description|default:"Описание пока не добавлено." }}</p>
+
+    {% if user.is_authenticated %}
+    <form class="card entry-form" data-entry-form data-movie="{{ movie.id }}" data-entry="{{ entry.id|default:'' }}">
+      <h3>{% if entry %}Фильм в вашем дневнике{% else %}Добавить в дневник{% endif %}</h3>
+      <div class="seg">
+        <label><input type="radio" name="status" value="want" {% if not entry or entry.status == 'want' %}checked{% endif %}> Хочу посмотреть</label>
+        <label><input type="radio" name="status" value="watched" {% if entry.status == 'watched' %}checked{% endif %}> Посмотрел</label>
+      </div>
+      <div class="watched-only">
+        <label class="field"><span class="field__label">Оценка</span>
+          <select name="rating"><option value="">без оценки</option>{% for i in ratings %}<option value="{{ i }}" {% if entry.rating == i %}selected{% endif %}>{{ i }}</option>{% endfor %}</select>
+        </label>
+        <label class="field"><span class="field__label">Дата просмотра</span><input type="date" name="watched_at" value="{{ entry.watched_at|date:'Y-m-d' }}"></label>
+        <label class="field"><span class="field__label">Отзыв</span><textarea name="review" rows="4" maxlength="2000" placeholder="Что понравилось, что нет?">{{ entry.review }}</textarea></label>
+      </div>
+      <div class="entry-form__actions">
+        <button class="btn" type="submit">{% if entry %}Сохранить{% else %}Добавить{% endif %}</button>
+        {% if entry %}<button class="btn btn--danger" type="button" data-delete>Убрать из дневника</button>{% endif %}
+      </div>
+    </form>
+    {% else %}
+      <p class="card"><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Войдите</a>, чтобы добавить фильм в дневник.</p>
+    {% endif %}
+  </div>
+</article>
+
+<section>
+  <h2>Отзывы зрителей</h2>
+  {% for r in reviews %}
+    <div class="review card"><b>{{ r.user.username }}</b> <span class="stars">{{ r.rating|default:0 }}/10</span><p>{{ r.review }}</p></div>
+  {% empty %}
+    <p class="muted">Отзывов пока нет. Будьте первым!</p>
+  {% endfor %}
+</section>
+{% endblock %}

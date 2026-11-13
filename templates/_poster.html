@@ -1,0 +1,1 @@
+{% if movie.poster_url %}<img class="poster" src="{{ movie.poster_url }}" alt="Постер: {{ movie.title }}" loading="lazy">{% else %}<div class="poster poster--empty" style="--h: {{ movie.id }}"><span>{{ movie.title|slice:":1" }}</span></div>{% endif %}
